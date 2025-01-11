@@ -13,7 +13,7 @@ This is an R Markdown format used for publishing markdown documents to GitHub. W
 
 ## Including Code
 
-You can include R code in the document as follows:
+This is just a placeholder for the time being.
 
 ```{r cars}
 summary(cars)

@@ -6,14 +6,32 @@ library(hereR)
 library(osrm)
 library(combinat)
 library(igraph)
+library(janitor)
+library(usethis)
 
 # Punch in addresses and names of locations
 
-address <- c("Trail Tree Park, Deerfield, IL",
-             "6 Greenbriar Dr, Deerfield, IL")
+address <- c("375 Carlisle Ave, Deerfield, IL",
+             "6 Greenbriar Dr, Deerfield, IL",
+             "200 Deerfield Rd, Deerfield, IL",
+             "900 Clay Ct, Deerfield, IL",
+             "836 Jewett Park Dr, Deerfield, IL",
+             "845 North Ave, Deerfield, IL",
+             "396 Cumnor Ct, Deerfield IL",
+             "319 Pine St, Deerfield IL",
+             "1425 Wilmot Rd, Deerfield IL",
+             "375 Elm St, Deerfield IL")
 
 name <- c("Trail Tree Park",
-          "Briarwood Park")
+          "Briarwood Park",
+          "Deerspring Park",
+          "Maplewood Park",
+          "Jewett Park",
+          "John Blumberg Tot Lot",
+          "Cumnor Court Park",
+          "Keller Park",
+          "Woodland Park",
+          "Brickyards Park")
 
 locations <- cbind(name,address)
 locations <- as.data.frame(locations)
@@ -34,13 +52,16 @@ edges <- data.frame(origin_nm = character(0),
 
 counter = 1
 
-# Now, create a function that creates a table of every possible 'edge' between nine schools
+# Now, create a function that creates a table of every possible 'edge' between locations
 for (row in 1:(nrow(data)-1)){
   for (col in (row+1):nrow(data)){
     if (setequal(data[row,],data[col,]) == FALSE){
     start_addr = data$address[row]
     end_addr = data$address[col]
+#    print(start_addr)
+#    print(end_addr)
     route = mapboxapi::mb_directions(origin=start_addr,destination=end_addr,profile="walking")
+#    print(route$distance)
     start_nm = data$name[row]
     end_nm = data$name[col]
     start_geo = data$geometry[row]
@@ -75,6 +96,9 @@ distRoute <- function(adjmat, route) {
 best_route <- NULL
 min_d <- Inf
 
+# First attempt will be to brute force the result
+library(rbenchmark)
+benchmark("bruteforce" = {
 for(i in 1:length(routes)) {
   
   route <- routes[[i]]
@@ -83,30 +107,51 @@ for(i in 1:length(routes)) {
   # distance
   new_d <- distRoute(adj_matrix,route)
   
+#  print(i)
+#  print(route)
+#  print(new_d)
+  
   # update distance and plot
   if(new_d < min_d) {
     min_d <- new_d
     best_route <- route
   }
+ # print(routes[[i]])
+ # print(route)
 }
+}, replications = 10,
+columns = c("test", "replications", "elapsed",
+            "relative", "user.self", "sys.self"))
 
+# First Method - Create a Table for the New Route by Joining to Original SF object
+# route_table <- as.data.frame(best_route) %>%
+#   rename(name = best_route) %>%
+#   inner_join(data) %>% 
+#   select(address,geometry)
 
-# Create the list of addresses for the route
-route_table <- as.data.frame(best_route) %>%
-  rename(name = best_route) %>%
-  inner_join(data) %>% 
-  select(address,geometry)
+# The problem now is that if you this this then the text "POINT" has been added to the table. It won't work when you try to 
+# generate a map. What's the solution?
+
+# Instead of joining, iterate through the sf object and create a new row for each name in the best route list
+
+# first create an empty sf object with the same fields by taking the original one and pulling out the rows
+stop_num = 1
+final_route = data %>% filter(is.null(name))
+
+# Then iterate through the best route, creating a new row for each location
+for (item in best_route){
+  final_route[stop_num,] = data %>% filter(name == item)
+  stop_num = stop_num + 1 # R doesn't have a built-in increment function like C++ or Python
+}
 
 # geocode the listed addresses
 
-mroute <- mapboxapi::mb_directions(input_data = route_table[2],
+mroute <- mapboxapi::mb_directions(input_data = final_route[1],
                                    profile = "walking")
 
 summary(mroute)
 
-
 library(leaflet)
-
 
 leaflet(data = data) %>% 
   addProviderTiles("CartoDB.Positron") %>% 
