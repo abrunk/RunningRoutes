@@ -47,138 +47,18 @@ answer.
 
 ``` r
 library(sf)              # For spatial data handling
-```
-
-    ## Linking to GEOS 3.12.2, GDAL 3.9.3, PROJ 9.4.1; sf_use_s2() is TRUE
-
-``` r
 library(tidyverse)       # For data manipulation
-```
-
-    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-    ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
-    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.0.2
-
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-``` r
 library(tidygeocoder)    # For geocoding addresses
 library(mapboxapi)       # For routing services
-```
-
-    ## Usage of the Mapbox APIs is governed by the Mapbox Terms of Service.
-    ## Please visit https://www.mapbox.com/legal/tos/ for more information.
-
-``` r
 library(hereR)           # Alternative routing service
-```
-
-    ## 
-    ## Attaching package: 'hereR'
-    ## 
-    ## The following objects are masked from 'package:tidygeocoder':
-    ## 
-    ##     geocode, reverse_geocode
-
-``` r
 library(osrm)            # Open Source Routing Machine
-```
-
-    ## Data: (c) OpenStreetMap contributors, ODbL 1.0 - http://www.openstreetmap.org/copyright
-    ## Routing: OSRM - http://project-osrm.org/
-
-``` r
 library(combinat)        # For generating permutations
-```
-
-    ## 
-    ## Attaching package: 'combinat'
-    ## 
-    ## The following object is masked from 'package:utils':
-    ## 
-    ##     combn
-
-``` r
 library(igraph)          # For graph operations
-```
-
-    ## 
-    ## Attaching package: 'igraph'
-    ## 
-    ## The following object is masked from 'package:hereR':
-    ## 
-    ##     incident
-    ## 
-    ## The following objects are masked from 'package:lubridate':
-    ## 
-    ##     %--%, union
-    ## 
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     as_data_frame, groups, union
-    ## 
-    ## The following objects are masked from 'package:purrr':
-    ## 
-    ##     compose, simplify
-    ## 
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     crossing
-    ## 
-    ## The following object is masked from 'package:tibble':
-    ## 
-    ##     as_data_frame
-    ## 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     decompose, spectrum
-    ## 
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     union
-
-``` r
 library(janitor)         # For data cleaning
-```
-
-    ## 
-    ## Attaching package: 'janitor'
-    ## 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     chisq.test, fisher.test
-
-``` r
 library(usethis)         # For project management
 library(leaflet)         # For printing to a visual map
 library(TSP)             # For using the built-in Traveling Salesman Problem algorithm
 library(ggmap)           # For creating maps for Github publication
-```
-
-    ## ℹ Google's Terms of Service: <https://mapsplatform.google.com>
-    ##   Stadia Maps' Terms of Service: <https://stadiamaps.com/terms-of-service/>
-    ##   OpenStreetMap's Tile Usage Policy: <https://operations.osmfoundation.org/policies/tiles/>
-    ## ℹ Please cite ggmap if you use it! Use `citation("ggmap")` for details.
-    ## 
-    ## Attaching package: 'ggmap'
-    ## 
-    ## 
-    ## The following objects are masked from 'package:hereR':
-    ## 
-    ##     geocode, route
-    ## 
-    ## 
-    ## The following object is masked from 'package:tidygeocoder':
-    ## 
-    ##     geocode
-
-``` r
 library(webshot2)        # For making Leaflet maps static for Github
 ```
 
@@ -221,17 +101,9 @@ locations <- as.data.frame(locations)
 # Convert addresses to coordinates
 data <- tidygeocoder::geo(locations[,2], method = "osm") %>% 
   st_as_sf(coords = c("long", "lat"), crs = 4326)
-```
 
-    ## Passing 10 addresses to the Nominatim single address geocoder
-
-    ## Query completed in: 10.7 seconds
-
-``` r
 data <- data %>% inner_join(locations)
 ```
-
-    ## Joining with `by = join_by(address)`
 
 ### Calculate Distances Between Locations
 
@@ -270,291 +142,13 @@ for (row in 1:(nrow(data)-1)){
     }
   }
 } 
-```
 
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Trail Tree Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Briarwood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Deerspring Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Maplewood Park",
-    ## : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Jewett Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("John Blumberg Tot
-    ## Lot", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Cumnor Court
-    ## Park", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Cumnor Court
-    ## Park", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Cumnor Court
-    ## Park", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Cumnor Court
-    ## Park", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Cumnor Court
-    ## Park", : replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Cumnor Court
-    ## Park", : replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Keller Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Keller Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Keller Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Keller Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Woodland Park", :
-    ## replacement element 3 has 2 rows to replace 1 rows
-
-    ## Warning in `[<-.data.frame`(`*tmp*`, counter, , value = list("Woodland Park", :
-    ## replacement element 6 has 2 rows to replace 1 rows
-
-``` r
 # Create adjacency matrix
 adj_matrix <- get.adjacency(graph_from_data_frame(
   edges %>% select(origin_nm,destination_nm,distance),
   directed = FALSE),
   attr="distance",sparse = FALSE)
 ```
-
-    ## Warning: `get.adjacency()` was deprecated in igraph 2.0.0.
-    ## ℹ Please use `as_adjacency_matrix()` instead.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
 
 ## Route Optimization Algorithms
 
@@ -636,8 +230,6 @@ leaflet(data = data) %>%
                weight = 2)
 ```
 
-    ## file:///C:\Users\alexb\AppData\Local\Temp\RtmpyeQvkm\file41f05f467603\widget41f01f814c12.html screenshot completed
-
 ![](Optimal-Running-Routes_files/figure-gfm/brute_force_viz-1.png)<!-- -->
 
 **Key Characteristics:** - Guaranteed to find the optimal solution -
@@ -683,8 +275,6 @@ leaflet(data = data) %>%
                color = "green",
                weight = 2)
 ```
-
-    ## file:///C:\Users\alexb\AppData\Local\Temp\RtmpyeQvkm\file41f04eef51a8\widget41f07f967a2c.html screenshot completed
 
 ![](Optimal-Running-Routes_files/figure-gfm/nearest_neighbor-1.png)<!-- -->
 
@@ -744,8 +334,6 @@ leaflet(data = data) %>%
                weight = 2)
 ```
 
-    ## file:///C:\Users\alexb\AppData\Local\Temp\RtmpyeQvkm\file41f022c34e58\widget41f01e776d.html screenshot completed
-
 ![](Optimal-Running-Routes_files/figure-gfm/two_opt-1.png)<!-- -->
 
 **Key Characteristics:** - Improvement algorithm (needs initial
@@ -804,8 +392,6 @@ leaflet(data = data) %>%
                weight = 2)
 ```
 
-    ## file:///C:\Users\alexb\AppData\Local\Temp\RtmpyeQvkm\file41f070ca6b16\widget41f021857f1.html screenshot completed
-
 ![](Optimal-Running-Routes_files/figure-gfm/simulated_annealing-1.png)<!-- -->
 
 **Key Characteristics:** - Can escape local optima - Results vary
@@ -843,8 +429,6 @@ leaflet(data = data) %>%
                weight = 2)
 ```
 
-    ## file:///C:\Users\alexb\AppData\Local\Temp\RtmpyeQvkm\file41f0512f3aa7\widget41f021b97742.html screenshot completed
-
 ![](Optimal-Running-Routes_files/figure-gfm/combined_visualization-1.png)<!-- -->
 
 ### Algorithm Performance Comparison
@@ -880,7 +464,7 @@ results_df %>%
 |:--------------------|------------:|-----------------:|
 | Brute Force         |        0.01 |            1.000 |
 | Two-Opt             |        0.01 |            1.071 |
-| Simulated Annealing |        0.01 |            1.071 |
+| Simulated Annealing |        0.01 |            1.115 |
 | Nearest Neighbor    |        0.01 |            1.157 |
 
 ## Key Findings and Recommendations
