@@ -2,10 +2,11 @@
 title: "Running Route Optimization"
 author: "Alex Brunk"
 date: "`r Sys.Date()`"
-output: rmarkdown::github_document
+output: 
   github_document:
     toc: true
     toc_depth: 3
+    dev: png
 ---
 
 ```{r setup, include=FALSE}
@@ -31,6 +32,10 @@ library(combinat)        # For generating permutations
 library(igraph)          # For graph operations
 library(janitor)         # For data cleaning
 library(usethis)         # For project management
+library(leaflet)         # For printing to a visual map
+library(TSP)             # For using the built-in Traveling Salesman Problem algorithm
+library(ggmap)           # For creating maps for Github publication
+library(webshot2)        # For making Leaflet maps static for Github
 ```
 
 ## Data Preparation
@@ -133,6 +138,21 @@ distRoute <- function(adjmat, route) {
   }
   return(d)
 }
+
+create_route_coordinates <- function(route, original_data) {
+  # Create empty sf object with same structure as original data
+  formatted_route = original_data %>% filter(is.null(name))
+  
+  # Populate with locations in route order
+  for (i in seq_along(route)) {
+    # Get location name from original data based on index in route
+    location_name <- original_data$name[route[i]]
+    # Add that location's data to our new route object
+    formatted_route[i,] = original_data %>% filter(name == location_name)
+  }
+  
+  return(formatted_route)
+}
 ```
 
 ### Algorithm 1: Brute Force
@@ -166,7 +186,9 @@ bf_result <- brute_force_tsp(adj_matrix)
 bf_coords <- create_route_coordinates(bf_result$route, data)
 bf_route <- mapboxapi::mb_directions(input_data = bf_coords,
                                    profile = "walking")
+```
 
+```{r brute_force_viz, fig.width=10,fig.height=8}
 # Visualize brute force route
 leaflet(data = data) %>% 
   addProviderTiles("CartoDB.Positron") %>% 
@@ -427,7 +449,42 @@ results_df %>%
 ## Results Comparison
 
 ```{r comparison}
-# Compare algorithm performance
+# Compare algorithm performance between these four as well as the built-in TSP package in R
+
+solve_with_tsp_package <- function(adj_matrix, method = "nearest_insertion") {
+  tsp <- TSP(adj_matrix)
+  tour <- solve_TSP(tsp, method = method)
+  route <- c(labels(tour), labels(tour)[1])  # Add return to start
+  return(route)
+}
+
+compare_algorithms <- function(adj_matrix) {
+  # Run each algorithm
+  bf_result <- brute_force_tsp(adj_matrix)
+  nn_route <- nearest_neighbor_tsp(adj_matrix, 1)
+  two_opt_route <- two_opt(adj_matrix, nearest_neighbor_tsp(adj_matrix, 1))
+  tsp_route <- solve_with_tsp_package(adj_matrix, "nearest_insertion")
+  sa_result <- simulated_annealing_tsp(adj_matrix)
+  
+  # Create comparison dataframe
+  results <- data.frame(
+    Algorithm = c("Brute Force", "Nearest Neighbor", "Two-opt", 
+                 "TSP Package", "Simulated Annealing"),
+    Distance = c(
+      bf_result$distance,
+      distRoute(adj_matrix, nn_route),
+      distRoute(adj_matrix, two_opt_route),
+      distRoute(adj_matrix, tsp_route),
+      sa_result$distance
+    )
+  )
+  
+  # Add relative performance metric
+  results$RelativeToOptimal <- results$Distance / min(results$Distance)
+  
+  return(results)
+}
+
 results <- compare_algorithms(adj_matrix)
 print(results)
 ```
