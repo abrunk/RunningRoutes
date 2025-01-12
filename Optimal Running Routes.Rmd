@@ -2,7 +2,7 @@
 title: "Running Route Optimization"
 author: "Alex Brunk"
 date: "`r Sys.Date()`"
-output: 
+output: rmarkdown::github_document
   github_document:
     toc: true
     toc_depth: 3
